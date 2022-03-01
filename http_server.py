@@ -6,9 +6,10 @@ from urllib.parse import urlparse, parse_qs
 
 # Config
 from test_wrapper import TestWrapper
+data_wrapper = TestWrapper()
+
 current_tag = ''
 current_list = []
-data_wrapper = TestWrapper()
 
 class CustomHandler(BaseHTTPRequestHandler):
     def do_GET(self):

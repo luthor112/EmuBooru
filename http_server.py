@@ -5,8 +5,8 @@ import json
 from urllib.parse import urlparse, parse_qs
 
 # Config
-from test_wrapper import TestWrapper
-data_wrapper = TestWrapper()
+from file_wrapper import FileWrapper
+data_wrapper = FileWrapper('/path/to/directory')
 
 current_tag = ''
 current_list = []
@@ -21,11 +21,11 @@ class CustomHandler(BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         parsed_query = parse_qs(parsed_url.query)
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json; charset=utf-8')
-        self.end_headers()
-
         if parsed_url.path == '/posts.json':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.end_headers()
+
             # Interpret query
             new_tag = ''
             if 'tags' in parsed_query:
@@ -41,10 +41,12 @@ class CustomHandler(BaseHTTPRequestHandler):
 
             # Extend list if needed
             if len(current_list) < query_page * query_limit:
-                current_list += data_wrapper.get_batch(query_page, query_limit, first_post)
+                current_list += data_wrapper.get_batch(current_tag, query_page, query_limit, first_post)
 
             # Send back results
             self.wfile.write(json.dumps(current_list[first_post:first_post+query_limit]).encode('utf-8'))
+        elif parsed_url.path.startswith('/plugin/'):
+            data_wrapper.handle(self)
 
 if __name__ == '__main__':
     server_address = ('', 80)

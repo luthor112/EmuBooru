@@ -3,7 +3,7 @@
 from copy import copy
 
 class TestWrapper:
-    def get_batch(self, query_page, query_limit, first_post):
+    def get_batch(self, current_tag, query_page, query_limit, first_post):
         if first_post == 0:
             test_data = {'rating': 's',
                          'score': 0,
@@ -35,3 +35,6 @@ class TestWrapper:
             return [test_data, test_data_b, test_data_c]
         else:
             return []
+
+    def handle(self, caller):
+        pass

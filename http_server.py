@@ -5,8 +5,8 @@ import json
 from urllib.parse import urlparse, parse_qs
 
 # Config
-from file_wrapper import FileWrapper
-data_wrapper = FileWrapper('/path/to/directory')
+from iwara_wrapper import IwaraWrapper
+data_wrapper = IwaraWrapper(10)
 
 current_tag = ''
 current_list = []

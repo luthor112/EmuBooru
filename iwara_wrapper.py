@@ -9,7 +9,7 @@ class IwaraWrapper:
         self.preload_tag = '_placeholder_'
         self.preload_data = []
 
-    def get_batch(self, current_tag, query_page, query_limit, first_post):
+    def get_batch(self, current_tag, query_page, query_limit, first_post, caller):
         item_list = []
 
         # Check if new search needs to be conducted

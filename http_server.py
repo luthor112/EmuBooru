@@ -5,8 +5,10 @@ import json
 from urllib.parse import urlparse, parse_qs
 
 # Config
+from file_wrapper import FileWrapper
 from iwara_wrapper import IwaraWrapper
-data_wrapper = IwaraWrapper(10)
+from test_wrapper import TestWrapper
+data_wrapper = FileWrapper('/mnt/e/MEGA/Pictures')
 
 current_tag = ''
 current_list = []
@@ -41,7 +43,7 @@ class CustomHandler(BaseHTTPRequestHandler):
 
             # Extend list if needed
             if len(current_list) < query_page * query_limit:
-                current_list += data_wrapper.get_batch(current_tag, query_page, query_limit, first_post)
+                current_list += data_wrapper.get_batch(current_tag, query_page, query_limit, first_post, self)
 
             # Send back results
             self.wfile.write(json.dumps(current_list[first_post:first_post+query_limit]).encode('utf-8'))

@@ -7,12 +7,13 @@ class FileWrapper:
         self.dir_path = local_dir
         self.dir_list = [f for f in os.listdir(local_dir) if os.path.isfile(os.path.join(local_dir, f))]
 
-    def get_batch(self, current_tag, query_page, query_limit, first_post):
+    def get_batch(self, current_tag, query_page, query_limit, first_post, caller):
         item_list = []
 
         for i in range(first_post, min(first_post + query_limit, len(self.dir_list))):
+            host_address = caller.headers['Host']
             item_fn = self.dir_list[i]
-            item_url = 'http://192.168.0.133/plugin/' + str(i) + item_fn[item_fn.rfind('.'):]
+            item_url = 'http://' + host_address + '/plugin/' + str(i) + item_fn[item_fn.rfind('.'):]
             item_data = {'rating': 's',
                          'score': 0,
                          'fav_count': 0,

@@ -8,7 +8,7 @@ from urllib.parse import urlparse, parse_qs
 from file_wrapper import FileWrapper
 from iwara_wrapper import IwaraWrapper
 from test_wrapper import TestWrapper
-data_wrapper = FileWrapper('/mnt/e/MEGA/Pictures')
+data_wrapper = IwaraWrapper()
 
 current_tag = ''
 current_list = []

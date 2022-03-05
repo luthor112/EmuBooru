@@ -4,8 +4,7 @@ import json
 import urllib.request
 
 class IwaraWrapper:
-    def __init__(self, page_preload):
-        self.page_preload_num = page_preload
+    def __init__(self):
         self.preload_tag = '_placeholder_'
         self.preload_data = []
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from concurrent.futures.thread import ThreadPoolExecutor
 import json
 import urllib.request
 
@@ -96,22 +97,26 @@ class IwaraWrapper:
             return True
 
     def do_load_urls(self, max_video_id):
-        for i in range(0, min(max_video_id, len(self.preload_data))):
-            if self.preload_data[i][1] is None:
-                # Query API for video URL
-                video_api_url = self.preload_data[i][2]
-                thumbnail_url = self.preload_data[i][0]
-                video_real_url = 'https:'
-                try:
-                    with urllib.request.urlopen(video_api_url) as video_api_response:
-                        print('Opening ' + video_api_url)
-                        video_api_data = json.loads(video_api_response.read().decode('utf-8'))
-                        video_real_url += video_api_data[0]['uri'] + '&.mp4'
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            for i in range(0, min(max_video_id, len(self.preload_data))):
+                if self.preload_data[i][1] is None:
+                    executor.submit(self.do_load_single_url, i)
 
-                    print(video_api_url + ' - ' + thumbnail_url + ' - ' + video_real_url)
-                    self.preload_data[i][1] = video_real_url
-                except:
-                    print('Bad structure.')
+    def do_load_single_url(self, video_id):
+        # Query API for video URL
+        video_api_url = self.preload_data[video_id][2]
+        thumbnail_url = self.preload_data[video_id][0]
+        video_real_url = 'https:'
+        try:
+            with urllib.request.urlopen(video_api_url) as video_api_response:
+                print('Opening ' + video_api_url)
+                video_api_data = json.loads(video_api_response.read().decode('utf-8'))
+                video_real_url += video_api_data[0]['uri'] + '&.mp4'
+
+            print(video_api_url + ' - ' + thumbnail_url + ' - ' + video_real_url)
+            self.preload_data[video_id][1] = video_real_url
+        except:
+            print('Bad structure.')
 
     def handle(self, caller):
         pass

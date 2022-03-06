@@ -96,7 +96,7 @@ class IwaraWrapper:
             return True
 
     def do_load_urls(self, max_video_id):
-        for i in range(0, max_video_id):
+        for i in range(0, min(max_video_id, len(self.preload_data))):
             if self.preload_data[i][1] is None:
                 # Query API for video URL
                 video_api_url = self.preload_data[i][2]

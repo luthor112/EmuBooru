@@ -5,10 +5,11 @@ import json
 from urllib.parse import urlparse, parse_qs
 
 # Config
+from chobit_wrapper import ChobitWrapper
 from file_wrapper import FileWrapper
 from iwara_wrapper import IwaraWrapper
 from test_wrapper import TestWrapper
-data_wrapper = IwaraWrapper()
+data_wrapper = ChobitWrapper()
 
 current_tag = ''
 current_list = []

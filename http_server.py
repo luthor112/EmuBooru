@@ -9,7 +9,11 @@ from chobit_wrapper import ChobitWrapper
 from file_wrapper import FileWrapper
 from iwara_wrapper import IwaraWrapper
 from test_wrapper import TestWrapper
-data_wrapper = ChobitWrapper()
+wrapper_dict = {
+    's:i': IwaraWrapper(),
+    's:c': ChobitWrapper()
+}
+wrapper_default = 's:i'
 
 current_tag = ''
 current_list = []
@@ -18,7 +22,8 @@ class CustomHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global current_tag
         global current_list
-        global data_wrapper
+        global wrapper_dict
+        global wrapper_default
 
         # Parse path
         parsed_url = urlparse(self.path)
@@ -42,13 +47,23 @@ class CustomHandler(BaseHTTPRequestHandler):
                 current_tag = new_tag
                 current_list = []
 
+            # Select wrapper
+            current_tag_nosite = current_tag
+            data_wrapper = wrapper_dict[wrapper_default]
+            if current_tag.startswith('s:'):
+                data_wrapper = wrapper_dict[current_tag[0:3]]
+                current_tag_nosite = current_tag[3:]
+                if len(current_tag_nosite) > 0 and current_tag_nosite[0] == ' ':
+                    current_tag_nosite = current_tag_nosite[1:]
+
             # Extend list if needed
             if len(current_list) < query_page * query_limit:
-                current_list += data_wrapper.get_batch(current_tag, query_page, query_limit, first_post, self)
+                current_list += data_wrapper.get_batch(current_tag_nosite, query_page, query_limit, first_post, self)
 
             # Send back results
             self.wfile.write(json.dumps(current_list[first_post:first_post+query_limit]).encode('utf-8'))
         elif parsed_url.path.startswith('/plugin/'):
+            data_wrapper = wrapper_dict[parsed_url.path[len('/plugin/'):3]]
             data_wrapper.handle(self)
 
 if __name__ == '__main__':

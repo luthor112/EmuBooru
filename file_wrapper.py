@@ -13,7 +13,7 @@ class FileWrapper:
         for i in range(first_post, min(first_post + query_limit, len(self.dir_list))):
             host_address = caller.headers['Host']
             item_fn = self.dir_list[i]
-            item_url = 'http://' + host_address + '/plugin/' + str(i) + item_fn[item_fn.rfind('.'):]
+            item_url = 'http://' + host_address + '/plugin/s:f/' + str(i) + item_fn[item_fn.rfind('.'):]
             item_data = {'rating': 's',
                          'score': 0,
                          'fav_count': 0,
@@ -39,7 +39,7 @@ class FileWrapper:
         return item_list
 
     def handle(self, caller):
-        file_id = int(caller.path[len('/plugin/'):caller.path.rfind('.')])
+        file_id = int(caller.path[len('/plugin/s:f/'):caller.path.rfind('.')])
 
         caller.send_response(200)
         caller.send_header('Content-type', 'application/octet-stream')

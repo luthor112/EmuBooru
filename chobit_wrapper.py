@@ -2,6 +2,7 @@
 
 from concurrent.futures.thread import ThreadPoolExecutor
 import json
+import urllib.parse
 import urllib.request
 
 class ChobitWrapper:
@@ -62,14 +63,14 @@ class ChobitWrapper:
         if self.preload_tag.startswith('c:vid'):
             search_url += 'vd'
             search_url += '&q_keyword='
-            search_url += self.preload_tag[len('c:vid '):].replace(' ', '+')
+            search_url += urllib.parse.quote(self.preload_tag[len('c:vid '):].replace(' ', '+'))
         elif self.preload_tag.startswith('c:v3d'):
             search_url += 'vd_3d'
             search_url += '&q_keyword='
-            search_url += self.preload_tag[len('c:v3d '):].replace(' ', '+')
+            search_url += urllib.parse.quote(self.preload_tag[len('c:v3d '):].replace(' ', '+'))
         else:
             search_url += '&q_keyword='
-            search_url += self.preload_tag.replace(' ', '+')
+            search_url += urllib.parse.quote(self.preload_tag.replace(' ', '+'))
         search_url += '&s_page='
         search_url += str(page_number)
 

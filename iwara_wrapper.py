@@ -2,6 +2,7 @@
 
 from concurrent.futures.thread import ThreadPoolExecutor
 import json
+import urllib.parse
 import urllib.request
 
 class IwaraWrapper:
@@ -63,12 +64,12 @@ class IwaraWrapper:
             site_url += 'ecchi.iwara.tv'
             search_url += 'ecchi.iwara.tv/search'
             search_url += '?query='
-            search_url += self.preload_tag[len('ecchi '):].replace(' ', '+')
+            search_url += urllib.parse.quote(self.preload_tag[len('ecchi '):].replace(' ', '+'))
         else:
             site_url += 'www.iwara.tv'
             search_url += 'www.iwara.tv/search'
             search_url += '?query='
-            search_url += self.preload_tag.replace(' ', '+')
+            search_url += urllib.parse.quote(self.preload_tag.replace(' ', '+'))
         search_url += '&page='
         search_url += str(page_number)
 

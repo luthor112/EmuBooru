@@ -63,7 +63,7 @@ class CustomHandler(BaseHTTPRequestHandler):
             # Send back results
             self.wfile.write(json.dumps(current_list[first_post:first_post+query_limit]).encode('utf-8'))
         elif parsed_url.path.startswith('/plugin/'):
-            data_wrapper = wrapper_dict[parsed_url.path[len('/plugin/'):3]]
+            data_wrapper = wrapper_dict[parsed_url.path[len('/plugin/'):len('/plugin/')+3]]
             data_wrapper.handle(self)
 
 if __name__ == '__main__':

@@ -27,11 +27,10 @@ class IwaraWrapper:
             while self.do_preload(self.latest_page) and len(self.preload_data) < first_post + query_limit:
                 self.latest_page += 1
 
-        # Parse minimum needed API responses
-        self.do_load_urls(first_post + query_limit)
-
         # Return complete data
         for i in range(first_post, min(first_post + query_limit, len(self.preload_data))):
+            host_address = caller.headers['Host']
+            item_url = 'http://' + host_address + '/plugin/s:i/' + str(i) + '.mp4'
             item_data = {'rating': 's',
                          'score': 0,
                          'fav_count': 0,
@@ -48,8 +47,8 @@ class IwaraWrapper:
                          'updated_at': '2022-03-01T13:35:13.654-05:00',
                          'source': '',
                          'preview_file_url': self.preload_data[i][0],
-                         'large_file_url': self.preload_data[i][1],
-                         'file_url': self.preload_data[i][1],
+                         'large_file_url': item_url,
+                         'file_url': item_url,
                          'id': i
                         }
             item_list.append(item_data)
@@ -120,4 +119,34 @@ class IwaraWrapper:
             print('Bad structure.')
 
     def handle(self, caller):
-        pass
+        video_id = int(caller.path[len('/plugin/s:i/'):caller.path.rfind('.')])
+
+        # Check cache
+        if self.preload_data[video_id][1] is not None:
+            video_real_url = self.preload_data[video_id][1]
+
+            # Redirect
+            print('Redirect to ' + video_real_url)
+            caller.send_response(308)
+            caller.send_header('Location', video_real_url)
+            caller.end_headers()
+        else:
+            video_api_url = self.preload_data[video_id][2]
+            video_real_url = 'https:'
+            try:
+                with urllib.request.urlopen(video_api_url) as video_api_response:
+                    print('Opening ' + video_api_url)
+                    video_api_data = json.loads(video_api_response.read().decode('utf-8'))
+                    video_real_url += video_api_data[0]['uri'] + '&.mp4'
+
+                # Cache
+                self.preload_data[video_id][1] = video_real_url
+
+                #Redirect
+                print('Redirect to ' + video_real_url)
+                caller.send_response(308)
+                caller.send_header('Location', video_real_url)
+                caller.end_headers()
+            except:
+                print('Bad structure at ' + video_api_url)
+                caller.send_error(404)
